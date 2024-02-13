@@ -11,13 +11,17 @@ public class AIMovement : MonoBehaviour
     Vector3 stopPosition;
 
     float walkTime;
+    float figthTime; //nu stiu daca ne trebuie inca
     public float walkCounter;
     float waitTime;
+    float runTime;
     public float waitCounter;
 
     int WalkDirection;
 
     public bool isWalking;
+    public bool isAttackiing;
+    public bool isRunning;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +32,8 @@ public class AIMovement : MonoBehaviour
         walkTime = Random.Range(3, 6);
         waitTime = Random.Range(5, 7);
 
+        runTime = Random.Range(3, 6);
+        waitTime = Random.Range(5, 7);
 
         waitCounter = waitTime;
         walkCounter = walkTime;

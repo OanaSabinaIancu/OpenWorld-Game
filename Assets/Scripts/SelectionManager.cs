@@ -32,5 +32,9 @@ public class SelectionManager : MonoBehaviour
             }
  
         }
+        else if (!Physics.Raycast(ray, out hit))
+        {
+            interaction_Info_UI.SetActive(false);
+        }
     }
 }
