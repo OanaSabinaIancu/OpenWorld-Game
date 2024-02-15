@@ -3,22 +3,30 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Pickable
+  - CookingPot
+  - NPC
+  - SpawnLocation
+  - Critter
+  - ChickInLantern
+  - AudioManager
+  - Canvas
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ground
+  - 
   - Water
   - UI
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - PostProcessing
+  - Characters
+  - HideWaterMask
+  - OccludingObjects
+  - OccludedTransparents
+  - TreeLeaves
   - 
   - 
   - 
