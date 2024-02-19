@@ -12,6 +12,7 @@ TagManager:
   - ChickInLantern
   - AudioManager
   - Canvas
+  - Slot
   layers:
   - Default
   - TransparentFX

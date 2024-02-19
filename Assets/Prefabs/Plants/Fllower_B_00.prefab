@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc7130845dc0c745ab457fe3e9dcb92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemName: Lily of the valley
+  ItemName: Lily
   playerInRange: 0
 --- !u!65 &1211831203361012810
 BoxCollider:
