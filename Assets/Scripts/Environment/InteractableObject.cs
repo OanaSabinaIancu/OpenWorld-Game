@@ -18,7 +18,7 @@ public class InteractableObject : MonoBehaviour
     //Pick up the items
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F) && playerInRange && SelectionManager.Instance.onTarget)
+        if(Input.GetKeyDown(KeyCode.F) && playerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.selectedObject == gameObject)
         {
             Debug.Log("Item added to inventory");
             

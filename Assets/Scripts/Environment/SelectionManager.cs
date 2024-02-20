@@ -14,6 +14,9 @@ public class SelectionManager : MonoBehaviour
     //Making the object targetable
     public bool onTarget;
 
+    //pick up just the object we want
+    public GameObject selectedObject;
+
     //As we can not create more than one instance for this class we use an awake method
     private void Awake()
     {
@@ -46,6 +49,9 @@ public class SelectionManager : MonoBehaviour
             if (interactable && interactable.playerInRange)
             {
                 onTarget = true;
+
+                selectedObject = interactable.gameObject;
+
                 interaction_text.text = interactable.GetItemName();
                 interaction_Info_UI.SetActive(true);
             }

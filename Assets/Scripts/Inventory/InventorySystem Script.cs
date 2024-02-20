@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.XR;
 public class InventorySystem : MonoBehaviour
 {
 
-   public static InventorySystem Instance { get; set; }
+    public static InventorySystem Instance { get; set; }
 
     public GameObject inventoryScreenUI;
     public bool isOpen;
@@ -16,7 +16,7 @@ public class InventorySystem : MonoBehaviour
     public List<GameObject> slotList = new List<GameObject>(); //list of slots
     public List<string> itemList = new List<string>(); //list of object names
     public List<int> itemCount = new List<int>(); //list of quantity
-    public int maxQuantity = 10;
+    public int maxQuantity = 11;
 
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
