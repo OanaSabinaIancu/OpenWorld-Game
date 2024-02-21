@@ -5,8 +5,7 @@ using UnityEngine;
 //this script is use to interact with object that can not be picked up
 public class SpecialInteraction : MonoBehaviour
 {
-    public static SpecialInteraction Instance { get; set; }
-
+  
     // Start is called before the first frame update
     public string ItemName;
 
@@ -24,37 +23,24 @@ public class SpecialInteraction : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && playerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.selectedObject == gameObject)
         {
             Debug.Log("Crafting bench open");
-
-            if (!InventorySystem.Instance.CheckIfFull())
-            {
-                InventorySystem.Instance.AddToInventory(ItemName);
-                Destroy(gameObject);
-
-            }
-            else
-            {
-                Debug.Log("The inventory is full");
-            }
         }
     }
 
     //Player enter in range
-    public bool OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
         }
-        return playerInRange;
     }
 
     //Player out of range
-    public bool OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
         }
-        return playerInRange;
     }
 }

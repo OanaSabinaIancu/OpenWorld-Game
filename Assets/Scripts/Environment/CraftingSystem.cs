@@ -1,23 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CraftingSystem : MonoBehaviour
 {
     public static CraftingSystem Instance { get; set; }
 
+    //tab switching buttons
     public GameObject craftingScreenUI;
+    public GameObject toolsScreenUI;
+    //public GameObject potionsScreenUI;
+
+    //Craft Button
+    Button CraftItemButton;
+
+    //Requirement text
+    Text ItemReq1, ItemReq2, ItemReq3;
+
+    //All blueprints
+
+    public List<string> inventoryItemList = new List<string>();
+
+    //Category buttons
+    Button toolsBTN;
+    Button potionsBTN;
+    Button craftingBTN;
+
     public bool isOpen;
 
     //declarations for object list
-    public List<GameObject> slotList = new List<GameObject>(); //list of slots
-    public List<string> itemList = new List<string>(); //list of object names
+    
     public List<int> itemCount = new List<int>(); //list of quantity
-    public int maxQuantity = 11;
-
-    private GameObject itemToAdd;
-    private GameObject whatSlotToEquip;
-
+    
     //collider for th crafting bench
     private Collider other;
 
@@ -39,33 +54,39 @@ public class CraftingSystem : MonoBehaviour
     void Start()
     {
         isOpen = false;
-        //isFull = false;
 
-        PopulateSlotList();
+        toolsBTN = craftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
+        toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
 
-        //adauga 0 pentru fiecare item
-
-        foreach (string item in itemList)
-        {
-            itemCount.Add(0);
-        }
+        /*potionsBTN = craftingScreenUI.transform.Find("PotionssButton").GetComponent<Button>();
+        potionsBTN.onClick.AddListener(delegate { OpenPotionsCategory();  });
+        
+        craftingBTN = craftingScreenUI.transform.Find("CraftingButton").GetComponent<Button>();
+        potionsBTN.onClick.AddListener(delegate { OpenCraftingCategory();  });*/
     }
 
-    private void PopulateSlotList()
+    void OpenToolsCategory()
     {
-        foreach (Transform child in craftingScreenUI.transform)
-        {
-            if (child.CompareTag("Slot"))
-            {
-                slotList.Add(child.gameObject);
-            }
-        }
+        craftingScreenUI.SetActive(false);
+        //toolsScreenUI.SetActive(true);
+    } 
+    
+    /*void OpenPotionsCategory()
+    {
+        craftingScreenUI.SetActive(false);
+        potionsScreenUI.SetActive(true);
     }
+    
+    void OpenCraftingCategory()
+    {
+        craftingScreenUI.SetActive(true);
+        potionsScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(false);
+    }*/
 
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.F) && !isOpen && SpecialInteraction.Instance.OnTriggerEnter(other))
+        if (Input.GetKeyDown(KeyCode.F) && !isOpen && SelectionManager.Instance.onTarget)
         {
 
             Debug.Log("f is pressed");
@@ -79,9 +100,10 @@ public class CraftingSystem : MonoBehaviour
 
 
         }
-        else if (Input.GetKeyDown(KeyCode.F) && isOpen)
+        else if ((Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Escape)) && isOpen)
         {
             craftingScreenUI.SetActive(false);
+            //toolsScreenUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             isOpen = false;
         }
