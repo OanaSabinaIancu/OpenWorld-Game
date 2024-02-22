@@ -18,7 +18,7 @@ public class InteractableObject : MonoBehaviour
     //Pick up the items
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F) && playerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.selectedObject == gameObject)
+        if(Input.GetKeyDown(KeyCode.F) && playerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.selectedObject == gameObject && !GetItemName().Equals("Crafting-Bench"))
         {
             Debug.Log("Item added to inventory");
             
@@ -27,6 +27,10 @@ public class InteractableObject : MonoBehaviour
                 InventorySystem.Instance.AddToInventory(ItemName);
                 Destroy(gameObject);
                 
+            }
+            else if(GetItemName().Equals("Crafting-Bench"))
+            {
+                Debug.Log("Crafting bench is here");
             }
             else
             {

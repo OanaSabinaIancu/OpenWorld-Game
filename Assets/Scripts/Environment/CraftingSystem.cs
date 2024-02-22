@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,6 +64,19 @@ public class CraftingSystem : MonoBehaviour
         
         craftingBTN = craftingScreenUI.transform.Find("CraftingButton").GetComponent<Button>();
         potionsBTN.onClick.AddListener(delegate { OpenCraftingCategory();  });*/
+
+        //Item
+        ItemReq1 = toolsScreenUI.transform.Find("Item").transform.Find("req1").GetComponent<Text>();
+        ItemReq2 = toolsScreenUI.transform.Find("Item").transform.Find("req2").GetComponent<Text>();
+        ItemReq3 = toolsScreenUI.transform.Find("Item").transform.Find("req3").GetComponent<Text>();
+
+        CraftItemButton = toolsScreenUI.transform.Find("Item").transform.Find("Button").GetComponent<Button>();
+        CraftItemButton.onClick.AddListener(delegate { CraftAnyItem(); });
+    }
+
+    private void CraftAnyItem()
+    {
+        throw new NotImplementedException();
     }
 
     void OpenToolsCategory()
@@ -86,6 +100,7 @@ public class CraftingSystem : MonoBehaviour
 
     void Update()
     {
+        //modifica conditia sa deschida craft bench-ul doar daca e aproape de unul
         if (Input.GetKeyDown(KeyCode.F) && !isOpen && SelectionManager.Instance.onTarget)
         {
 
