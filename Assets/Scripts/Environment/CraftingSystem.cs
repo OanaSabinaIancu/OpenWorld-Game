@@ -103,17 +103,19 @@ public class CraftingSystem : MonoBehaviour
         //modifica conditia sa deschida craft bench-ul doar daca e aproape de unul
         if (Input.GetKeyDown(KeyCode.F) && !isOpen && SelectionManager.Instance.onTarget)
         {
+            // Check if the object being interacted with is not a crafting bench
+            InteractableObject interactableObject = SelectionManager.Instance.selectedObject.GetComponent<InteractableObject>();
+            if (interactableObject != null && interactableObject.GetItemName().Equals("Crafting-Bench"))
+            {
+                Debug.Log("f is pressed");
+                craftingScreenUI.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
 
-            Debug.Log("f is pressed");
-            craftingScreenUI.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
+                //adauga blocarea miscarii caracterului
+                //controller.Move(move * speed * Time.deltaTime);
 
-            //adauga blocarea miscarii caracterului
-            //controller.Move(move * speed * Time.deltaTime);
-
-            isOpen = true;
-
-
+                isOpen = true;
+            }
         }
         else if ((Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Escape)) && isOpen)
         {
