@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: DefaultCompany
   productName: Disertatie
-  defaultCursor: {fileID: 0}
+  defaultCursor: {fileID: 2800000, guid: 8b6aa447b20662c468aa5adc8d36cc79, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.7169812, g: 0.5731075, b: 0.33481666, a: 1}
   m_ShowUnitySplashScreen: 1

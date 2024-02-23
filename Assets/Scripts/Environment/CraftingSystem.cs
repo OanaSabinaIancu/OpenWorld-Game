@@ -22,13 +22,19 @@ public class CraftingSystem : MonoBehaviour
     //All blueprints
 
     public List<string> inventoryItemList = new List<string>();
+    public List<int> inventoryItemCount = new List<int>();
 
     //Category buttons
     Button toolsBTN;
     Button potionsBTN;
     Button craftingBTN;
 
+    public Blueprint itemBlueprint = new Blueprint("Sword", 3, "Lily", 1, "Crafting Sword", 3, "Iron");
+
     public bool isOpen;
+
+    //All blueprints
+
 
     //declarations for object list
     
@@ -71,12 +77,48 @@ public class CraftingSystem : MonoBehaviour
         ItemReq3 = toolsScreenUI.transform.Find("Item").transform.Find("req3").GetComponent<Text>();
 
         CraftItemButton = toolsScreenUI.transform.Find("Item").transform.Find("Button").GetComponent<Button>();
-        CraftItemButton.onClick.AddListener(delegate { CraftAnyItem(); });
+        CraftItemButton.onClick.AddListener(delegate { CraftAnyItem(itemBlueprint); });
     }
 
-    private void CraftAnyItem()
+    private void CraftAnyItem(Blueprint itemBlueprint)
     {
-        throw new NotImplementedException();
+        //add item into inventory
+        InventorySystem.Instance.AddToInventory(itemBlueprint.name);
+
+        //remove resources from the inventory
+        InventorySystem.Instance.RemoveItem(itemBlueprint.req1, itemBlueprint.req1Amount);
+        InventorySystem.Instance.RemoveItem(itemBlueprint.req2, itemBlueprint.req2Amount);
+        InventorySystem.Instance.RemoveItem(itemBlueprint.req3, itemBlueprint.req3Amount);
+
+        //recalculate the number of remaining items
+        //InventorySystem.Instance.RecalculateList();
+
+        //modifica maine cu chatgpt
+        StartCoroutine(calculate());
+
+        //refresh the needed items
+        RefreshNeededItems();
+    }
+
+    private void RefreshNeededItems()
+    {
+        //doua variabile
+
+        inventoryItemList = InventorySystem.Instance.itemList;
+        inventoryItemCount = InventorySystem.Instance.itemCount;
+
+        ItemReq1.text = inventoryItemCount[0].ToString() + "/3";
+        ItemReq2.text = inventoryItemCount[1].ToString() + "/3";
+        ItemReq3.text = inventoryItemCount[2].ToString() + "/3";
+
+        if(inventoryItemCount[0] >= 3 && inventoryItemCount[1] >=3 && inventoryItemCount[2] >=3)
+        {
+            craftingBTN.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftingBTN.gameObject.SetActive(false);
+        }
     }
 
     void OpenToolsCategory()
@@ -124,5 +166,12 @@ public class CraftingSystem : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             isOpen = false;
         }
+    }
+
+    public IEnumerator calculate()
+    {
+        yield return 0;
+
+        InventorySystem.Instance.RecalculateList();
     }
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -13,11 +15,15 @@ public class InventorySystem : MonoBehaviour
     public List<GameObject> slotList = new List<GameObject>(); //list of slots
     public List<string> itemList = new List<string>(); //list of object names
     public List<int> itemCount = new List<int>(); //list of quantity
-    public int maxQuantity = 11;
+    public int maxQuantity = 10;
 
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
     //public bool isFull;
+
+    public GameObject pickUpAlert;
+    public Text pickupName;
+    public Image pickupImage;
 
     private void Awake()
     {
@@ -88,9 +94,13 @@ public class InventorySystem : MonoBehaviour
         int itemPosition = itemList.IndexOf(itemName);
         if (itemPosition != -1)
         {
-            if (itemCount[itemPosition] < maxQuantity)
+            if (itemCount[itemPosition] <= maxQuantity)
             {
                 itemCount[itemPosition]++;
+                itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), slotList[itemPosition].transform.position, slotList[itemPosition].transform.rotation);
+
+                TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
+
                 Debug.Log("Added 1 " + itemName + ". Current stack size: " + itemCount[itemPosition]);
             }
             else
@@ -107,11 +117,55 @@ public class InventorySystem : MonoBehaviour
                 newItem.transform.SetParent(emptySlot.transform);
                 itemList.Add(itemName);
                 itemCount.Add(1);
+                
+                
+                //itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), slotList[itemPosition].transform.position, slotList[itemPosition].transform.rotation);
+                //repara bug aici, nu afiseaza daca ridici primul produs
+                //TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
                 Debug.Log("Added 1 " + itemName + " to a new slot.");
             }
             else
             {
                 Debug.Log("Inventory is full. Cannot add " + itemName + ".");
+            }
+        }
+    }
+
+    void TriggerPickupPopUp(string itemName, Sprite itemSprite) 
+    { 
+        pickUpAlert.SetActive(true);
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+    }
+
+    public void RecalculateList()
+    {
+        Debug.Log("reluare");
+    }
+
+    public void RemoveItem(string nameToRemove, int amountToRemove)
+    {
+        int counter = amountToRemove; //la noi e mai simplu ca stim deja cantitatile si unde se afla ele in inventar (sunt in acelasi slot)
+
+        for(var i = slotList.Count - 1; i >= 0; i--) 
+        {
+            if (slotList[i].transform.childCount > 0)
+            {
+                if (slotList[i].transform.GetChild(0).name == nameToRemove + "Clone" && counter > 0)
+                {
+                    counter = itemCount[i] - amountToRemove;
+                    itemCount[i] -= amountToRemove; //reset the counter for the object
+                }
+                if(counter == 0)
+                {
+                    Destroy(slotList[i].transform.GetChild(0));
+                    Debug.Log("All the quantity was used");
+                    itemCount[i] = 0;
+                }
+                else if(counter < 0)
+                {
+                    Debug.Log("Not enaugh items");
+                }
             }
         }
     }
