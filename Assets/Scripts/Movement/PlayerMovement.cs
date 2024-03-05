@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static PlayerMovement Instance { get; set; }
+
     public CharacterController controller;
 
     public float speed = 12f;
@@ -18,6 +21,18 @@ public class PlayerMovement : MonoBehaviour
 
     bool isGrounded;
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -31,17 +46,28 @@ public class PlayerMovement : MonoBehaviour
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
+        float run = speed * 10;
 
         //right is the red Axis, foward is the blue axis
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        
 
         //check if the player is on the ground so he can jump
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             //the equation for jumping
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+
+        //check if the player wants to run
+        if(Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift))
+        {
+            controller.Move(move * run * Time.deltaTime);
+        }
+        else
+        {
+            controller.Move(move * speed * Time.deltaTime);
         }
 
         velocity.y += gravity * Time.deltaTime;

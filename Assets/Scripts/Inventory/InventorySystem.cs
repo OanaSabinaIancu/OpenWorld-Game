@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,6 @@ public class InventorySystem : MonoBehaviour
 
     private GameObject itemToAdd;
     private GameObject whatSlotToEquip;
-    //public bool isFull;
 
     public GameObject pickUpAlert;
     public Text pickupName;
@@ -37,20 +37,11 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
-
     void Start()
     {
         isOpen = false;
-        //isFull = false;
 
         PopulateSlotList();
-
-        //adauga 0 pentru fiecare item
-
-        foreach (string item in itemList)
-        {
-            itemCount.Add(0);
-        }
     }
 
     private void PopulateSlotList()
@@ -73,10 +64,7 @@ public class InventorySystem : MonoBehaviour
             Debug.Log("b is pressed");
             inventoryScreenUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
-
-            //adauga blocarea miscarii caracterului
-            //controller.Move(move * speed * Time.deltaTime);
-
+            PlayerMovement.Instance.controller.enabled = true;
             isOpen = true;
 
 
@@ -85,40 +73,69 @@ public class InventorySystem : MonoBehaviour
         {
             inventoryScreenUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
+            //blocking character's movement
+            PlayerMovement.Instance.controller.enabled = false;
             isOpen = false;
         }
     }
 
     public void AddToInventory(string itemName)
-    {
-        int itemPosition = itemList.IndexOf(itemName);
-        if (itemPosition != -1)
-        {
+     {
+         int itemPosition = itemList.IndexOf(itemName);
+         if (itemPosition != -1)
+         {
             if (itemCount[itemPosition] <= maxQuantity)
             {
                 itemCount[itemPosition]++;
-                itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), slotList[itemPosition].transform.position, slotList[itemPosition].transform.rotation);
+                GameObject itemToAdd = Instantiate(Resources.Load<GameObject>(itemName));
+                itemToAdd.transform.SetParent(slotList[itemPosition].transform);
+                itemToAdd.transform.localPosition = Vector3.zero;
+                itemToAdd.transform.localRotation = Quaternion.identity;
 
                 TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
-
                 Debug.Log("Added 1 " + itemName + ". Current stack size: " + itemCount[itemPosition]);
             }
             else
             {
                 Debug.Log("Inventory slot for " + itemName + " is full.");
             }
-        }
+
+            /*itemCount[itemPosition]++;
+            itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), slotList[itemPosition].transform.position, slotList[itemPosition].transform.rotation);
+
+            TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
+
+            Debug.Log("Added 1 " + itemName + ". Current stack size: " + itemCount[itemPosition]);*/
+         }
         else
         {
             GameObject emptySlot = FindNextEmptySlot();
+            if (emptySlot != null)
+            {
+                GameObject newItem = Instantiate(Resources.Load<GameObject>(itemName));
+                newItem.transform.SetParent(emptySlot.transform);
+                newItem.transform.localPosition = Vector3.zero;
+                newItem.transform.localRotation = Quaternion.identity;
+                itemList.Add(itemName);
+                itemCount.Add(1);
+
+                TriggerPickupPopUp(itemName, newItem.GetComponent<Image>().sprite);
+                Debug.Log("Added 1 " + itemName + " to a new slot.");
+            }
+            else
+            {
+                Debug.Log("Inventory is full. Cannot add " + itemName + ".");
+            }
+
+            /*GameObject emptySlot = FindNextEmptySlot();
             if (emptySlot != null)
             {
                 GameObject newItem = Instantiate(Resources.Load<GameObject>(itemName), emptySlot.transform.position, emptySlot.transform.rotation);
                 newItem.transform.SetParent(emptySlot.transform);
                 itemList.Add(itemName);
                 itemCount.Add(1);
-                
-                
+
+
                 //itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), slotList[itemPosition].transform.position, slotList[itemPosition].transform.rotation);
                 //repara bug aici, nu afiseaza daca ridici primul produs
                 //TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
@@ -127,12 +144,12 @@ public class InventorySystem : MonoBehaviour
             else
             {
                 Debug.Log("Inventory is full. Cannot add " + itemName + ".");
-            }
+            }*/
         }
     }
 
-    void TriggerPickupPopUp(string itemName, Sprite itemSprite) 
-    { 
+    void TriggerPickupPopUp(string itemName, Sprite itemSprite)
+    {
         pickUpAlert.SetActive(true);
         pickupName.text = itemName;
         pickupImage.sprite = itemSprite;
