@@ -6510,7 +6510,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   staminaCounter: {fileID: 112401383}
+  staminaRegenRate: 3
+  movementStaminaConsumptionRate: 5
   playerState: {fileID: 835722392}
+  currentStamina: 0
+  maxStamina: 0
 --- !u!4 &243101211 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2442449847355554121, guid: 39fc60b2ea4775b42bff362ec733d8ff,
@@ -8040,7 +8044,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 13.599998, y: -35.3}
-  m_SizeDelta: {x: -17.339996, y: -62.2}
+  m_SizeDelta: {x: -40, y: -62.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &276362656
 MonoBehaviour:
@@ -12440,7 +12444,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 449184779}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 15.7}
+  m_LocalPosition: {x: 0, y: 0, z: 28.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12448,8 +12452,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 14.900002, y: -16.9}
-  m_SizeDelta: {x: -2, y: -4.5}
+  m_AnchoredPosition: {x: 16.400002, y: -18}
+  m_SizeDelta: {x: -28, y: -4.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &449184781
 MonoBehaviour:
@@ -19608,7 +19612,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 14.700012, y: -35.799995}
-  m_SizeDelta: {x: -16.5, y: -62.2}
+  m_SizeDelta: {x: -40, y: -62.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &737141152
 MonoBehaviour:
@@ -43431,7 +43435,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1557216563}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 16.8}
+  m_LocalPosition: {x: 0, y: 0, z: 2.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43439,8 +43443,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 4.399994, y: -31}
-  m_SizeDelta: {x: 178, y: -4.5}
+  m_AnchoredPosition: {x: -85.9, y: -31}
+  m_SizeDelta: {x: -24, y: -4.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1557216565
 MonoBehaviour:
@@ -45829,6 +45833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 1629808147}
   speed: 12
+  sprintSpeedMultiplier: 2
   gravity: -19.62
   jumpHeight: 3
   groundCheck: {fileID: 384083550}
@@ -57222,7 +57227,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -252, y: -189}
+  m_AnchoredPosition: {x: -221.6, y: -112.1}
   m_SizeDelta: {x: 180, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2043801366

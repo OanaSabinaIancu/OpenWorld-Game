@@ -26,6 +26,9 @@ public class HealthBar : MonoBehaviour
             currentHealth = playerState.GetComponent<PlayerState>().currentHealth;
             maxHealth = playerState.GetComponent<PlayerState>().maxHealth;
 
+            // Ensure health doesn't go below zero
+            currentHealth = Mathf.Max(currentHealth, 0f);
+
             float fillValue = currentHealth / maxHealth;
             slider.value = fillValue;
 

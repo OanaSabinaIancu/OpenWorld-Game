@@ -1,20 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerState : MonoBehaviour
 {
-    public static PlayerState Instance { get; set; }
+    public static PlayerState Instance { get; private set; }
 
-    //player health
-
+    // Player health
     public float currentHealth;
     public float maxHealth;
 
-    //player stamina
-
+    // Player stamina
     public float currentStamina;
     public float maxStamina;
+    public float sprintStaminaConsumptionRate = 5f; // Lowered sprint stamina consumption rate
+    public float staminaRegen = 0.7f;
+
+    private bool isSprinting;
 
     private void Awake()
     {
@@ -32,11 +33,33 @@ public class PlayerState : MonoBehaviour
     {
         currentHealth = maxHealth;
         currentStamina = maxStamina;
+        StartCoroutine(DecreaseStamina());
+    }
+
+    IEnumerator DecreaseStamina()
+    {
+        while (true)
+        {
+            // Check for sprinting input
+            isSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetMouseButton(1);
+
+            // Only decrease stamina if sprinting
+            if (isSprinting && currentStamina > 0)
+            {
+                currentStamina -= 10;
+            }
+            else // Regenerate stamina if not sprinting
+            {
+                currentStamina = Mathf.Min(currentStamina + staminaRegen, maxStamina);
+            }
+            
+            yield return new WaitForSeconds(3); // Wait for 3 seconds before repeating
+        }
     }
 
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.N)) 
+        if (Input.GetKeyUp(KeyCode.N))
         {
             currentHealth -= 50;
         }
