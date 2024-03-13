@@ -51,31 +51,43 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     // Triggered when the mouse is clicked over the item that has this script.
     public void OnPointerDown(PointerEventData eventData)
     {
-        // Right Mouse Button Click on
-        if (eventData.button == PointerEventData.InputButton.Right)
+        int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
+
+        // Check if the itemPosition index is valid
+        if (itemPosition >= 0)
         {
-            // Find the position of the item name in the itemList
-            int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
-
-            // Check if itemCount at the itemPosition is higher than 0
-            if (isConsumable && InventorySystem.Instance.itemCount[itemPosition] > 0)
+            // Right Mouse Button Click on
+            if (eventData.button == PointerEventData.InputButton.Right && InventorySystem.Instance.itemCount[itemPosition] > 0)
             {
-                // Setting this specific gameobject to be the item we want to destroy later
-                itemPendingConsumption = gameObject;
-
-                // Decrease the item count
-                InventorySystem.Instance.itemCount[itemPosition]--;
-
-                // Check if there are no more items left
-                if (InventorySystem.Instance.itemCount[itemPosition] == 0)
+                // Check if the item is consumable
+                if (isConsumable)
                 {
-                    itemInfoUI_itemDescription.text = "Item not available";
-                }
+                    // Setting this specific gameobject to be the item we want to destroy later
+                    itemPendingConsumption = gameObject;
 
-                consumingFunction(healthEffect, staminaEffect);
+                    // Decrease the item count
+                    InventorySystem.Instance.itemCount[itemPosition]--;
+
+                    // Check if there are no more items left
+                    if (InventorySystem.Instance.itemCount[itemPosition] < 0)
+                    {
+                        itemInfoUI_itemDescription.text = "Item not available";
+                    }
+                    else
+                    {
+                        itemInfoUI_itemDescription.text = "Item was consumed. You have " + InventorySystem.Instance.itemCount[itemPosition] + " items remaining";
+                    }
+
+                    consumingFunction(healthEffect, staminaEffect);
+                }
             }
         }
+        else
+        {
+            itemInfoUI_itemDescription.text = "Item can not be consumed";
+        }
     }
+
 
     // Triggered when the mouse button is released over the item that has this script.
     public void OnPointerUp(PointerEventData eventData)
