@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public static PlayerMovement Instance { get; set; }
 
@@ -18,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 velocity;
 
     bool isGrounded;
+    bool isSprinting;
 
     private void Awake()
     {
@@ -58,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Calculate the speed multiplier based on sprinting
-        float speedMultiplier = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetMouseButton(1) ? sprintSpeedMultiplier : 1f;
+        float speedMultiplier = isSprinting ? sprintSpeedMultiplier : 1f;
 
         // Move the player using the controller
         controller.Move(move * speed * speedMultiplier * Time.deltaTime);
@@ -68,5 +70,23 @@ public class PlayerMovement : MonoBehaviour
 
         // Move the player based on the velocity
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        // When the left shift button is pressed, start sprinting
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            isSprinting = true;
+        }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        // When the left shift button is released, stop sprinting
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            isSprinting = false;
+        }
     }
 }

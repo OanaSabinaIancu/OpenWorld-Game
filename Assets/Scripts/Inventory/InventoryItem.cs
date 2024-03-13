@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,17 +12,17 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private Text itemInfoUI_itemName;
     private Text itemInfoUI_itemDescription;
-    private Text itemInfoUI_itemFunctionality;
+    private Image itemInfoUI_itemSprite; // Change to Image type
 
-    public string thisName, thisDescription, thisFunctionality;
+    public string thisName, thisDescription;
+    public Sprite thisSprite; // Resource name for the sprite
 
     // --- Consumption --- //
     private GameObject itemPendingConsumption;
     public bool isConsumable;
 
     public float healthEffect;
-    public float caloriesEffect;
-    public float hydrationEffect;
+    public float staminaEffect;
 
 
     private void Start()
@@ -32,7 +30,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         itemInfoUI = InventorySystem.Instance.ItemInfoUI;
         itemInfoUI_itemName = itemInfoUI.transform.Find("itemName").GetComponent<Text>();
         itemInfoUI_itemDescription = itemInfoUI.transform.Find("itemDescription").GetComponent<Text>();
-        itemInfoUI_itemFunctionality = itemInfoUI.transform.Find("itemFunctionality").GetComponent<Text>();
+        itemInfoUI_itemSprite = itemInfoUI.transform.Find("itemPicture").GetComponent<Image>();
     }
 
     // Triggered when the mouse enters into the area of the item that has this script.
@@ -41,7 +39,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         itemInfoUI.SetActive(true);
         itemInfoUI_itemName.text = thisName;
         itemInfoUI_itemDescription.text = thisDescription;
-        itemInfoUI_itemFunctionality.text = thisFunctionality;
+        itemInfoUI_itemSprite.sprite = thisSprite;
     }
 
     // Triggered when the mouse exits the area of the item that has this script.
@@ -53,14 +51,28 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     // Triggered when the mouse is clicked over the item that has this script.
     public void OnPointerDown(PointerEventData eventData)
     {
-        //Right Mouse Button Click on
+        // Right Mouse Button Click on
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (isConsumable)
+            // Find the position of the item name in the itemList
+            int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
+
+            // Check if itemCount at the itemPosition is higher than 0
+            if (isConsumable && InventorySystem.Instance.itemCount[itemPosition] > 0)
             {
                 // Setting this specific gameobject to be the item we want to destroy later
                 itemPendingConsumption = gameObject;
-                consumingFunction(healthEffect, caloriesEffect, hydrationEffect);
+
+                // Decrease the item count
+                InventorySystem.Instance.itemCount[itemPosition]--;
+
+                // Check if there are no more items left
+                if (InventorySystem.Instance.itemCount[itemPosition] == 0)
+                {
+                    itemInfoUI_itemDescription.text = "Item not available";
+                }
+
+                consumingFunction(healthEffect, staminaEffect);
             }
         }
     }
@@ -72,82 +84,45 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             if (isConsumable && itemPendingConsumption == gameObject)
             {
-                DestroyImmediate(gameObject);
-                InventorySystem.Instance.ReCalculeList();
-                CraftingSystem.Instance.RefreshNeededItems();
+                InventorySystem.Instance.ConsumeItem(thisName); // Call InventorySystem method to consume the item
             }
         }
     }
 
-    private void consumingFunction(float healthEffect, float caloriesEffect, float hydrationEffect)
+    private void consumingFunction(float healthEffect, float staminaEffect)
     {
-        itemInfoUI.SetActive(false);
-
-        healthEffectCalculation(healthEffect);
-
-        caloriesEffectCalculation(caloriesEffect);
-
-        hydrationEffectCalculation(hydrationEffect);
-
+        int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
+        if (InventorySystem.Instance.itemCount[itemPosition] == 1)
+        {
+            healthEffectCalculation(healthEffect);
+            staminaEffectCalculation(staminaEffect);
+            itemInfoUI.SetActive(false);
+        }
     }
 
-    private static void healthEffectCalculation(float healthEffect)
+    private void healthEffectCalculation(float healthEffect)
     {
         // --- Health --- //
-
         float healthBeforeConsumption = PlayerState.Instance.currentHealth;
         float maxHealth = PlayerState.Instance.maxHealth;
 
         if (healthEffect != 0)
         {
-            if ((healthBeforeConsumption + healthEffect) > maxHealth)
-            {
-                PlayerState.Instance.setHealth(maxHealth);
-            }
-            else
-            {
-                PlayerState.Instance.setHealth(healthBeforeConsumption + healthEffect);
-            }
+            float newHealth = Mathf.Min(healthBeforeConsumption + healthEffect, maxHealth);
+            PlayerState.Instance.setHealth(newHealth); // Assuming PlayerState has a SetHealth method
         }
     }
 
-    private static void caloriesEffectCalculation(float caloriesEffect)
+    private void staminaEffectCalculation(float staminaEffect)
     {
-        // --- Calories --- //
+        // --- Stamina --- //
+        float staminaBeforeConsumption = PlayerState.Instance.currentStamina;
+        float maxStamina = PlayerState.Instance.maxStamina;
 
-        float caloriesBeforeConsumption = PlayerState.Instance.currentCalories;
-        float maxCalories = PlayerState.Instance.maxCalories;
-
-        if (caloriesEffect != 0)
+        if (staminaEffect != 0)
         {
-            if ((caloriesBeforeConsumption + caloriesEffect) > maxCalories)
-            {
-                PlayerState.Instance.setCalories(maxCalories);
-            }
-            else
-            {
-                PlayerState.Instance.setCalories(caloriesBeforeConsumption + caloriesEffect);
-            }
-        }
-    }
-
-    private static void hydrationEffectCalculation(float hydrationEffect)
-    {
-        // --- Hydration --- //
-
-        float hydrationBeforeConsumption = PlayerState.Instance.currentHydrationPercent;
-        float maxHydration = PlayerState.Instance.maxHydrationPercent;
-
-        if (hydrationEffect != 0)
-        {
-            if ((hydrationBeforeConsumption + hydrationEffect) > maxHydration)
-            {
-                PlayerState.Instance.setHydration(maxHydration);
-            }
-            else
-            {
-                PlayerState.Instance.setHydration(hydrationBeforeConsumption + hydrationEffect);
-            }
+            float newStamina = Mathf.Min(staminaBeforeConsumption + staminaEffect, maxStamina);
+            PlayerState.Instance.setStamina(newStamina); // Assuming PlayerState has a SetStamina method
         }
     }
 }

@@ -9,6 +9,9 @@ public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem Instance { get; set; }
 
+    //reference for the item info
+    public GameObject ItemInfoUI;
+
     public GameObject inventoryScreenUI;
     public bool isOpen;
 
@@ -18,12 +21,13 @@ public class InventorySystem : MonoBehaviour
     public List<int> itemCount = new List<int>(); //list of quantity
     public int maxQuantity = 10;
 
-    private GameObject itemToAdd;
+    public GameObject itemToAdd;
     private GameObject whatSlotToEquip;
 
     public GameObject pickUpAlert;
     public Text pickupName;
     public Image pickupImage;
+
 
     private void Awake()
     {
@@ -69,7 +73,7 @@ public class InventorySystem : MonoBehaviour
 
 
         }
-        else if (Input.GetKeyDown(KeyCode.B) && isOpen)
+        else if ((Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.Escape)) && isOpen)
         {
             inventoryScreenUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
@@ -87,7 +91,7 @@ public class InventorySystem : MonoBehaviour
             if (itemCount[itemPosition] <= maxQuantity)
             {
                 itemCount[itemPosition]++;
-                GameObject itemToAdd = Instantiate(Resources.Load<GameObject>(itemName));
+                itemToAdd = Instantiate(Resources.Load<GameObject>(itemName));
                 itemToAdd.transform.SetParent(slotList[itemPosition].transform);
                 itemToAdd.transform.localPosition = Vector3.zero;
                 itemToAdd.transform.localRotation = Quaternion.identity;
@@ -223,5 +227,28 @@ public class InventorySystem : MonoBehaviour
         if (counter > 24 * 10 + 1)
             return true;
         return false;
+    }
+
+    public void ConsumeItem(string itemName)
+    {
+        int itemPosition = itemList.IndexOf(itemName);
+        if (itemPosition != -1)
+        {
+            if (itemCount[itemPosition] > 1)
+            {
+                itemCount[itemPosition]--; // Decrease the quantity
+                Debug.Log("Consumed 1 " + itemName + ". Remaining quantity: " + itemCount[itemPosition]);
+            }
+            else
+            {
+                itemList.RemoveAt(itemPosition);
+                itemCount.RemoveAt(itemPosition);
+                Debug.Log("Consumed the last " + itemName + " from the inventory.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Item " + itemName + " not found in the inventory.");
+        }
     }
 }

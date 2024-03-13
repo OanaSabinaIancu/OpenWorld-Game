@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -63,5 +64,17 @@ public class PlayerState : MonoBehaviour
         {
             currentHealth -= 50;
         }
+    }
+
+    public void setHealth(float newHealth)
+    {
+        // Ensure health doesn't exceed maxHealth
+        currentHealth = Mathf.Clamp(newHealth, 0f, maxHealth);
+    }
+
+    public void setStamina(float newStamina)
+    {
+        // Ensure stamina doesn't exceed maxStamina
+        currentStamina = Mathf.Clamp(newStamina, 0f, maxStamina);
     }
 }
