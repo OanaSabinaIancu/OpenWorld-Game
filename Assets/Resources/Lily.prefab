@@ -101,7 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f2b10b40c7a26843a7d9f5e9ad4c46f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTrashable: 0
+  isTrashable: 1
+  itemInfoUI: {fileID: 0}
   thisName: Lily of the Valley
   thisDescription: A magical flower that smells amazing and that helps you to craft
     potions.

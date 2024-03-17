@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
+
     // --- Is this item trashable --- //
     public bool isTrashable;
 
@@ -11,7 +12,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private GameObject itemInfoUI;
 
     private Text itemInfoUI_itemName;
-    private Text itemInfoUI_itemDescription;
+    public Text itemInfoUI_itemDescription;
     private Image itemInfoUI_itemSprite; // Change to Image type
 
     public string thisName, thisDescription;
@@ -24,6 +25,21 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public float healthEffect;
     public float staminaEffect;
 
+    //public Image selectedItems;
+
+    //public static InventoryItem Instance { get; set; }
+
+    /*private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }*/
 
     private void Start()
     {
@@ -31,6 +47,8 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         itemInfoUI_itemName = itemInfoUI.transform.Find("itemName").GetComponent<Text>();
         itemInfoUI_itemDescription = itemInfoUI.transform.Find("itemDescription").GetComponent<Text>();
         itemInfoUI_itemSprite = itemInfoUI.transform.Find("itemPicture").GetComponent<Image>();
+
+        //selectedItems.SetActive(selectedItems.activeSelf);
     }
 
     // Triggered when the mouse enters into the area of the item that has this script.
@@ -54,7 +72,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
 
         // Check if the itemPosition index is valid
-        if (itemPosition >= 0)
+        if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Right)
         {
             // Right Mouse Button Click on
             if (eventData.button == PointerEventData.InputButton.Right && InventorySystem.Instance.itemCount[itemPosition] > 0)
@@ -82,9 +100,23 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 }
             }
         }
-        else
+        else if(eventData.button == PointerEventData.InputButton.Right)
         {
             itemInfoUI_itemDescription.text = "Item can not be consumed";
+        }
+        else if(eventData.button == PointerEventData.InputButton.Left)
+        {
+            // Check if the item is trashable
+            if (isTrashable)
+            {
+                TrashSlot trashSlot = FindObjectOfType<TrashSlot>();
+                trashSlot.SelectItemForDeletion(gameObject);
+            }
+            Debug.Log("Would you like to delete this object?");
+        }
+        else 
+        { 
+            isTrashable = false; 
         }
     }
 

@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTrashable: 0
+  itemInfoUI_itemDescription: {fileID: 0}
   thisName: Mushroom
   thisDescription: A special mushroom tht helps you to increase the stamina
   thisSprite: {fileID: 21300000, guid: 6591707070bac2a4f9f39e0965028c6a, type: 3}

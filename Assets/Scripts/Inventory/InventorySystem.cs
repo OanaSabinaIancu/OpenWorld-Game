@@ -44,7 +44,7 @@ public class InventorySystem : MonoBehaviour
     void Start()
     {
         isOpen = false;
-
+        ItemInfoUI.SetActive(false);
         PopulateSlotList();
     }
 
@@ -68,7 +68,7 @@ public class InventorySystem : MonoBehaviour
             Debug.Log("b is pressed");
             inventoryScreenUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
-            PlayerMovement.Instance.controller.enabled = true;
+            PlayerMovement.Instance.controller.enabled = false;
             isOpen = true;
 
 
@@ -78,7 +78,7 @@ public class InventorySystem : MonoBehaviour
             inventoryScreenUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             //blocking character's movement
-            PlayerMovement.Instance.controller.enabled = false;
+            PlayerMovement.Instance.controller.enabled = true;
             isOpen = false;
         }
     }

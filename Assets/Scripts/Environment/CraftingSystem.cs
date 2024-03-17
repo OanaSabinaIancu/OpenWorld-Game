@@ -152,7 +152,7 @@ public class CraftingSystem : MonoBehaviour
                 Debug.Log("f is pressed");
                 craftingScreenUI.SetActive(true);
                 //blocking character's movement
-                PlayerMovement.Instance.controller.enabled = true;
+                PlayerMovement.Instance.controller.enabled = false;
                 Cursor.lockState = CursorLockMode.None;
 
                 //adauga blocarea miscarii caracterului
@@ -167,7 +167,7 @@ public class CraftingSystem : MonoBehaviour
             //toolsScreenUI.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             //blocking character's movement
-            PlayerMovement.Instance.controller.enabled = false;
+            PlayerMovement.Instance.controller.enabled = true;
             isOpen = false;
         }
     }

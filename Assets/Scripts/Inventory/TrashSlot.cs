@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TrashSlot : MonoBehaviour
@@ -17,6 +18,7 @@ public class TrashSlot : MonoBehaviour
     Button YesBTN, NoBTN;
 
     GameObject itemToBeDeleted;
+    bool isItemDeleted = false; // Flag to track if item has been deleted
 
     public string itemName
     {
@@ -31,9 +33,9 @@ public class TrashSlot : MonoBehaviour
 
     void Start()
     {
-        imageComponent = transform.Find("background").GetComponent<Image>();
+        //imageComponent = transform.Find("background").GetComponent<Image>();
 
-        textToModify = trashAlertUI.transform.Find("Text").GetComponent<Text>();
+        //textToModify = trashAlertUI.transform.Find("Text").GetComponent<Text>();
 
         YesBTN = trashAlertUI.transform.Find("yes").GetComponent<Button>();
         YesBTN.onClick.AddListener(DeleteItem);
@@ -44,7 +46,7 @@ public class TrashSlot : MonoBehaviour
 
     public void SelectItemForDeletion(GameObject item)
     {
-        if (item.GetComponent<InventoryItem>().isTrashable)
+        if (item.GetComponent<InventoryItem>().isTrashable && !isItemDeleted) // Check if item is trashable and not already deleted
         {
             itemToBeDeleted = item;
             StartCoroutine(notifyBeforeDeletion());
@@ -54,20 +56,54 @@ public class TrashSlot : MonoBehaviour
     IEnumerator notifyBeforeDeletion()
     {
         trashAlertUI.SetActive(true);
-        textToModify.text = "Throw away this " + itemName + "?";
+        //textToModify.text = "Throw away this " + itemName + "?";
         yield return new WaitForSeconds(1f);
     }
 
     private void CancelDeletion()
     {
-        imageComponent.sprite = trash_closed;
+        //imageComponent.sprite = trash_closed;
         trashAlertUI.SetActive(false);
     }
 
     private void DeleteItem()
     {
-        imageComponent.sprite = trash_closed;
-        Destroy(itemToBeDeleted.gameObject);
+        // Update item counter in InventorySystem
+        int itemPosition = InventorySystem.Instance.itemList.IndexOf(itemToBeDeleted.GetComponent<InventoryItem>().thisName);
+        if (itemPosition >= 0 && itemPosition < InventorySystem.Instance.itemCount.Count)
+        {
+            InventorySystem.Instance.itemCount[itemPosition] = 0;
+        }
+
+        // Set flag to true to indicate item has been deleted
+        isItemDeleted = true;
+
+        //imageComponent.sprite = trash_closed;
+        //Destroy(itemToBeDeleted.gameObject);
         trashAlertUI.SetActive(false);
+        Debug.Log("Item deleted: ");
+
+    }
+
+    // Add an event handler for left mouse button clicks
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        // Check if the left mouse button is clicked
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            Debug.Log("Object selected");
+
+            // Get the item game object
+            GameObject item = eventData.pointerCurrentRaycast.gameObject;
+
+            InventorySystem.Instance.ItemInfoUI.SetActive(false);
+
+            // Select the item for deletion
+            SelectItemForDeletion(item);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            trashAlertUI.SetActive(false);
+        }
     }
 }
