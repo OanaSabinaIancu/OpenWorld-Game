@@ -46,6 +46,8 @@ public class InventorySystem : MonoBehaviour
         isOpen = false;
         ItemInfoUI.SetActive(false);
         PopulateSlotList();
+
+        Cursor.visible = false;
     }
 
     private void PopulateSlotList()
@@ -71,6 +73,10 @@ public class InventorySystem : MonoBehaviour
             PlayerMovement.Instance.controller.enabled = false;
             isOpen = true;
 
+            Cursor.visible = true;
+
+            SelectionManager.Instance.DisableSelection();
+            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
 
         }
         else if ((Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.Escape)) && isOpen)
@@ -80,6 +86,11 @@ public class InventorySystem : MonoBehaviour
             //blocking character's movement
             PlayerMovement.Instance.controller.enabled = true;
             isOpen = false;
+
+            Cursor.visible = false;
+
+            SelectionManager.Instance.EnableSelection();
+            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
         }
     }
 

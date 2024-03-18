@@ -17,6 +17,9 @@ public class SelectionManager : MonoBehaviour
     //pick up just the object we want
     public GameObject selectedObject;
 
+    public Image handIcon;
+    public Image centerDotImage;
+
     //As we can not create more than one instance for this class we use an awake method
     private void Awake()
     {
@@ -34,6 +37,9 @@ public class SelectionManager : MonoBehaviour
     {
         onTarget = false;
         interaction_text = interaction_Info_UI.GetComponent<Text>();
+
+        //disable the center dot image from the center of th screen
+        centerDotImage.enabled = false;
     }
  
     void Update()
@@ -67,5 +73,20 @@ public class SelectionManager : MonoBehaviour
             onTarget = false;
             interaction_Info_UI.SetActive(false);
         }
+    }
+
+    public void DisableSelection()
+    {
+        handIcon.enabled = false;
+        interaction_Info_UI.SetActive(false);
+
+        //deselect the object if the menu is open
+        selectedObject = null;
+    }
+
+    public void EnableSelection()
+    {
+        handIcon.enabled = true;
+        interaction_Info_UI.SetActive(true);
     }
 }
