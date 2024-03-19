@@ -25,21 +25,14 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public float healthEffect;
     public float staminaEffect;
 
-    //public Image selectedItems;
+    //Equiping
 
-    //public static InventoryItem Instance { get; set; }
+    public bool isEquippable;
+    private GameObject itemPendingEquipping;
+    public bool isInsideQuickSlot;
 
-    /*private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }*/
+    public bool isSelected;
+
 
     private void Start()
     {
@@ -49,6 +42,11 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         itemInfoUI_itemSprite = itemInfoUI.transform.Find("itemPicture").GetComponent<Image>();
 
         //selectedItems.SetActive(selectedItems.activeSelf);
+    }
+
+    private void Update()
+    {
+        
     }
 
     // Triggered when the mouse enters into the area of the item that has this script.
@@ -72,7 +70,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
 
         // Check if the itemPosition index is valid
-        if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Right)
+        if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Right || itemPosition >= 0 && Input.GetKeyDown(KeyCode.Z))
         {
             // Right Mouse Button Click on
             if (eventData.button == PointerEventData.InputButton.Right && InventorySystem.Instance.itemCount[itemPosition] > 0)
@@ -100,11 +98,11 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 }
             }
         }
-        else if(eventData.button == PointerEventData.InputButton.Right)
+        else if(eventData.button == PointerEventData.InputButton.Right )
         {
             itemInfoUI_itemDescription.text = "Item can not be consumed";
         }
-        else if(eventData.button == PointerEventData.InputButton.Left)
+        else if(itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Left)
         {
             // Check if the item is trashable
             if (isTrashable)
@@ -117,6 +115,16 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         else 
         { 
             isTrashable = false; 
+        }
+
+        if(isEquippable && isInsideQuickSlot == false && EquipSystem.Instance.CheckIfFull() == false)
+        {
+            EquipSystem.Instance.AddToQuickSlots(gameObject);
+            isInsideQuickSlot = true;
+            if(InventorySystem.Instance.itemCount[itemPosition] <= 0)
+            {
+                isInsideQuickSlot = false;
+            }
         }
     }
 

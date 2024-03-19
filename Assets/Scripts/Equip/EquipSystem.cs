@@ -13,6 +13,11 @@ public class EquipSystem : MonoBehaviour
     public List<GameObject> quickSlotsList = new List<GameObject>();
     public List<string> itemList = new List<string>();
 
+    public GameObject numberHolder;
+
+    public GameObject selectedItem;
+    public int selectedNumber;
+
 
     private void Awake()
     {
@@ -30,6 +35,57 @@ public class EquipSystem : MonoBehaviour
     private void Start()
     {
         PopulateSlotList();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Z))
+        {
+            SelectQuickSlot(0);
+        }
+    }
+
+    void SelectQuickSlot(int number)
+    {
+        if(checkIfSlotIsFull(number))
+        {
+            if(selectedNumber != number)
+            {
+                selectedNumber = number;
+                selectedItem = getSelectedItem(number);
+                selectedItem.GetComponent<InventoryItem>().isSelected = true;
+
+                //deselect previously selected item
+                if (selectedItem != null)
+                {
+                    selectedItem.gameObject.GetComponent<InventoryItem>().isSelected = false;
+                }
+
+                //color
+                Text toBeChanged = numberHolder.transform.Find("number").transform.Find("Text").GetComponent<Text>();
+                toBeChanged.color = Color.blue;
+            }
+            else
+            {
+                selectedNumber = -1;
+                if(selectedItem != null)
+                {
+                    selectedItem.gameObject.GetComponent<InventoryItem>().isSelected = false;
+                }
+            }
+        }
+    }
+
+    GameObject getSelectedItem(int slotNumber)
+    {
+        return quickSlotsList[slotNumber].transform.GetChild(0).gameObject;
+    }
+
+    bool checkIfSlotIsFull(int number)
+    {
+        if (quickSlotsList[0].transform.childCount > 0)
+            return true;
+        return  false;
     }
 
     private void PopulateSlotList()
@@ -81,7 +137,7 @@ public class EquipSystem : MonoBehaviour
             }
         }
 
-        if (counter == 7)
+        if (counter == 1)
         {
             return true;
         }
