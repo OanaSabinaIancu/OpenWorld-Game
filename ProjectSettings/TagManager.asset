@@ -13,6 +13,7 @@ TagManager:
   - AudioManager
   - Canvas
   - Slot
+  - QuickSlot
   layers:
   - Default
   - TransparentFX

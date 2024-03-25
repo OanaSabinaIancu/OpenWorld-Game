@@ -31,8 +31,24 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private GameObject itemPendingEquipping;
     public bool isInsideQuickSlot;
 
+    private bool isConsumed;
+
     public bool isSelected;
 
+    public static InventoryItem Instance { get; set; }
+
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     private void Start()
     {
@@ -41,13 +57,68 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         itemInfoUI_itemDescription = itemInfoUI.transform.Find("itemDescription").GetComponent<Text>();
         itemInfoUI_itemSprite = itemInfoUI.transform.Find("itemPicture").GetComponent<Image>();
 
+        isConsumed = false;
+
         //selectedItems.SetActive(selectedItems.activeSelf);
     }
 
     private void Update()
     {
-        
+        // Check if the item is not null and if it has a valid position in the item list
+        if (!string.IsNullOrEmpty(thisName))
+        {
+            int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
+
+            // Ensure that the item position is valid
+            if (itemPosition >= 0 && itemPosition < InventorySystem.Instance.itemCount.Count)
+            {
+                // Check if the item is consumed
+                isConsumed = InventorySystem.Instance.itemCount[itemPosition] <= 0;
+
+                // Handle consuming the item
+                if (Input.GetKeyDown(KeyCode.Z) && !isConsumed)
+                {
+                    // Check if the item is consumable
+                    if (isConsumable)
+                    {
+                        // Setting this specific gameobject to be the item we want to destroy later
+                        itemPendingConsumption = gameObject;
+
+                        // Display appropriate message
+                        if (InventorySystem.Instance.itemCount[itemPosition] < 0)
+                        {
+                            itemInfoUI_itemDescription.text = "Item not available";
+                        }
+                        else 
+                        {
+                            itemInfoUI_itemDescription.text = "Item was consumed. You have " + InventorySystem.Instance.itemCount[itemPosition] + " items remaining";
+                        }
+
+                        
+                        if (InventorySystem.Instance.itemCount[itemPosition] > 0)
+                        {
+                            itemInfoUI_itemDescription.text = "Item was consumed. You have " + InventorySystem.Instance.itemCount[itemPosition] + " items remaining";
+                            consumingFunction(healthEffect, staminaEffect);
+                            // Decrease the item count
+                            InventorySystem.Instance.itemCount[itemPosition]--;
+                        }
+                        
+                        else 
+                        {
+                            itemInfoUI_itemDescription.text = "Item was not consumed. You do not have any items remaining";
+                        }
+                    }
+                }
+            }
+            else if(itemPosition < 0 || itemPosition > InventorySystem.Instance.itemCount.Count)
+            {
+                itemInfoUI_itemDescription.text = "Item not available";
+            }
+           
+        }
     }
+
+
 
     // Triggered when the mouse enters into the area of the item that has this script.
     public void OnPointerEnter(PointerEventData eventData)
@@ -65,12 +136,13 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
 
     // Triggered when the mouse is clicked over the item that has this script.
+    // Triggered when the mouse is clicked over the item that has this script.
     public void OnPointerDown(PointerEventData eventData)
     {
         int itemPosition = InventorySystem.Instance.itemList.IndexOf(thisName);
 
         // Check if the itemPosition index is valid
-        if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Right || itemPosition >= 0 && Input.GetKeyDown(KeyCode.Z))
+        if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Right || itemPosition >= 0)
         {
             // Right Mouse Button Click on
             if (eventData.button == PointerEventData.InputButton.Right && InventorySystem.Instance.itemCount[itemPosition] > 0)
@@ -98,11 +170,11 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 }
             }
         }
-        else if(eventData.button == PointerEventData.InputButton.Right )
+        else if (eventData.button == PointerEventData.InputButton.Right)
         {
             itemInfoUI_itemDescription.text = "Item can not be consumed";
         }
-        else if(itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Left)
+        else if (itemPosition >= 0 && eventData.button == PointerEventData.InputButton.Left)
         {
             // Check if the item is trashable
             if (isTrashable)
@@ -112,22 +184,17 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
             Debug.Log("Would you like to delete this object?");
         }
-        else 
-        { 
-            isTrashable = false; 
+        else
+        {
+            isTrashable = false;
         }
 
-        if(isEquippable && isInsideQuickSlot == false && EquipSystem.Instance.CheckIfFull() == false)
+        if (isEquippable && isInsideQuickSlot == false && EquipSystem.Instance.CheckIfFull() == false)
         {
             EquipSystem.Instance.AddToQuickSlots(gameObject);
             isInsideQuickSlot = true;
-            if(InventorySystem.Instance.itemCount[itemPosition] <= 0)
-            {
-                isInsideQuickSlot = false;
-            }
         }
     }
-
 
     // Triggered when the mouse button is released over the item that has this script.
     public void OnPointerUp(PointerEventData eventData)
